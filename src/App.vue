@@ -1,5 +1,6 @@
 <script setup>
 import HelloWorld from './components/HelloWorld.vue'
+import proxy_test from './components/HelloWorld.vue'
 </script>
 
 <template>

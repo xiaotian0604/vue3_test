@@ -1,9 +1,10 @@
 import { createApp } from 'vue'
 import './style.css'
 import App from './App.vue'
+import proxy_test from './views/proxy_test.vue'
 
 console.log(App,"<=======")
-const app = createApp(App)
+const app = createApp(proxy_test)
 app.mount('#app')
 setTimeout(()=>{
     app.unmount('#app')
