@@ -4,7 +4,7 @@ import App from './App.vue'
 import proxy_test from './views/proxy_test.vue'
 
 console.log(App,"<=======")
-const app = createApp(proxy_test)
+const app = createApp(App)
 app.mount('#app')
 setTimeout(()=>{
     app.unmount('#app')
