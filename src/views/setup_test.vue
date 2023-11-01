@@ -25,7 +25,7 @@ import {ref} from "vue";
 //                     }
 
 // 使用setup语法糖在setup(){}方法中,任何变量,方法都可以定义,而且不受作用域限制。
-// 也就是说没有this这回事了,原来有this是为了找到扩展在在该vue,模版对象中的data
+// 也就是说没有this这回事了,原来有this是为了找到扩展在在该vue模版对象中的data
 // 但是想要让数据变成响应式数据 还要进一步加工
 // 普通数据类型
 // 使用ref()进行包裹 如 let name = ref('刘文博') 想要获取name中的值 则必须name.value
