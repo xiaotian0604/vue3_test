@@ -64,7 +64,7 @@ export default {
 
         //特殊情况: 想监听对象里的对象 怎么办
         //        如果结合情况四  watch(()=>obj.obj,(newValue,oldValue)=>{}) ❌️❌️❌️
-        //        ✅正确写法: watch(()=>obj.xxx,(newValue,oldValue)=>{},{deep:true})
+        //        ✅正确写法: watch(()=>obj.obj,(newValue,oldValue)=>{},{deep:true})
         //        为什么呢❓❓❓
         //        我理解的是：当用reactive()定义了一个相应对象时,其实就是用proxy去做了一个监听。
         //                  但是对象里的属性,没有被proxy监听,所以要开启deep深度监听。(应该是对的,如果发现理解的不对,帮我改正)

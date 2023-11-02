@@ -1,5 +1,8 @@
 <template>
-    <h2>示例来解释 watchEffect()、watchSyncEffect() 和 watchPostEffect() 的区别</h2>
+    <h2>示例来解释 watchEffect() </h2>
+    <h2>以及 watchEffect()、watchSyncEffect() 和 watchPostEffect() 的区别</h2>
+    <button type="button" @click="modify">商品数量增加</button>
+    <div class="">{{result}}</div>
     <div>
         <button @click="increment">Increment</button>
         <p>Count: {{ count }}</p>
@@ -7,26 +10,65 @@
 </template>
 
 <script>
-import { ref, watchEffect, watchSyncEffect, watchPostEffect } from 'vue';
+import {ref, watchEffect, watchSyncEffect, watchPostEffect, reactive} from 'vue';
 export default {
     name: "watchEffect_test",
     setup() {
     // 除了watch() vue3还提供了一个挺牛逼的函数 watchEffect()
     // 语法和watch()差不多,但还是有区别 如下:
+        let name = ref('刘小天')
         watchEffect(()=>{
-          // 发没发现一个问题 watchEffect()函数 第一个参数 没传值！！？
-          // watchEffect()函数不用传值,也就是说不用告诉它你要监视谁 那咋整
+          // 发没发现一个问题 watchEffect()函数 第一个参数 没传值❓❓❓
+          // 因为 watchEffect() 函数不用传值,也就是说不用告诉它你要监视谁,它会自动捕获再函数内用到的变量值
+          // 比如:
+            console.log(`大家好,我叫${name.value}`)// <---- 此时是不是用到了变量值 name
+          // 此时如果在其他地方把 name的值修改了 则会执行当前callback回调函数
+        },{})
+        //⬆️⬆️注意第二个参数我写了个空对象 后面会说对象里可以写什么⬆️⬆️
+        name.value = '刘大天' // 此时name的值被修改了,则会被watchEffect()函数监听到,从而执行内部逻辑
 
-        },{})//注意第二个参数我写了个空对象 后面会说对象里可以写什么
-    // 在 Vue 3 中，`watchPostEffect()`, `watchEffect()`, 和 `watchSyncEffect()` 是用于监视响应式数据变化并执行副作用的函数，它们的主要区别在于执行时机和响应方式。
+    //  扩展一下思维 watchEffect() 函数的使用场景有哪些❓
+    //  当我们处理价格计算需求的时候(包括但不限于),是不是可以用到 watchEffect()
+    //  举个例子:
+        let commodity = reactive([{
+            productName:'苹果15ProMax',
+            price:9999,
+            commodityId:1,
+            num:0,
+        }])
+        let totalPrice = ref(0)
+        let totalNum = ref(0)
+        let result = ref('')
+        const modify = () => commodity[0].num++
+        const resultCallBack = () => {
+            let commodityNum = 0
+            let commodityPrice = 0
+            commodity.forEach((item,index)=>{
+                commodityNum += item.num
+                commodityPrice += item.num * item.price
+                totalNum.value = commodityNum
+                totalPrice.value = commodityPrice
+            })
+            result.value = `您一共购买了${totalNum.value}间商品,总价格为${totalPrice.value}`
+        }
+        watchEffect(resultCallBack, {
+             onTrack(event) {
+               console.log('Dependency tracked:', event);
+             },
+             onTrigger(event) {
+               console.log('Dependency triggered:', event);
+             },
+        })
+
+    // 下面是关于 watchEffect() 函数的扩展 <---- 面试细节
+    // watchEffect()
+    // 在 `watchPostEffect()`, ``, 和 `watchSyncEffect()` 是用于监视响应式数据变化并执行副作用的函数，它们的主要区别在于执行时机和响应方式。
     // 这三种函数的区别主要在于它们的执行时机和同步性质：
     // - `watchEffect` 是异步执行的，捕获依赖并在下一个微任务中执行。
     // - `watchSyncEffect` 是立即同步执行的，不等待微任务队列。
     // - `watchPostEffect` 是在 Vue 生命周期的 "post" 阶段执行，确保在 DOM 更新后执行。
     // 看上面解释看定有点懵 写个方法试试
-
         const count = ref(0);
-
         // 使用 watchEffect
         watchEffect(() => {
             console.log('watchEffect:', count.value);
@@ -51,6 +93,8 @@ export default {
         return {
             count,
             increment,
+            modify,
+            result
         };
 //         watchEffect():
 //         当你点击 "Increment" 按钮时，watchEffect 立即执行，但是它会在下一个微任务队列中执行。
